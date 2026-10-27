@@ -4,12 +4,14 @@ import TMASalud
 import TMAFinanzas
 import TMAActividades
 import TMABlog
+import TMASecurity
 
 struct RootTabView: View {
     enum Tab: Hashable {
-        case salud, finanzas, actividades, blog
+        case salud, finanzas, actividades, blog, ajustes
     }
 
+    let lock: AppLockModel
     @State private var selection: Tab = .salud
 
     var body: some View {
@@ -29,11 +31,15 @@ struct RootTabView: View {
             BlogView()
                 .tabItem { Label("Blog", systemImage: "square.and.pencil") }
                 .tag(Tab.blog)
+
+            SettingsView(lock: lock)
+                .tabItem { Label("Ajustes", systemImage: "gearshape") }
+                .tag(Tab.ajustes)
         }
         .tint(TMATheme.accent)
     }
 }
 
 #Preview {
-    RootTabView()
+    RootTabView(lock: AppLockModel())
 }
