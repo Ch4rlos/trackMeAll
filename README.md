@@ -91,11 +91,12 @@ El detalle, con la cita de la documentación de Apple, está en
 
 | Qué | Cómo | Resultado |
 |---|---|---|
-| Tests de dominio (`TMACore`) | `swift test` en macOS | **5 passed** |
-| Tests del bloqueo biométrico (`TMASecurity`) | `swift test` en macOS | **7 passed** |
+| Tests de dominio (`TMACore`) | `swift test` en macOS (local y CI) | **5 passed** |
+| Tests del bloqueo biométrico (`TMASecurity`) | `swift test` en macOS (local y CI) | **7 passed** |
 | Compilación de los 7 paquetes | `swiftc -emit-module`, Swift 6, SDK iOS 26.5 | 0 errores, 0 warnings |
 | Compilación del target de app | `swiftc -typecheck` con los 7 módulos | 0 errores |
-| Ejecución en simulador | pendiente del componente *iOS 26.5 platform* en Xcode | — |
+| Build del target en simulador | GitHub Actions `macos-latest`, simulador iPhone 17 Pro | **BUILD SUCCEEDED** |
+| Arrancar la app en simulador local | pendiente del componente *iOS 26.5 platform* en Xcode | — |
 | Biometría, Keychain, widgets, Live Activity en runtime | pendiente de dispositivo | — |
 
 ## Cómo correr
@@ -145,9 +146,10 @@ Personal iOS app that brings four areas together: **Health**, **Finance**, **Act
 and **Blog**. SwiftUI with MVVM and `@Observable`, one SwiftPM package per domain, real
 biometric security, and mock data while the backend is defined.
 
-**Verified**: 12 tests passing on macOS (`swift test`), all 7 packages and the app target
-compile clean under Swift 6 against the iOS 26.5 SDK. Running in the Simulator is pending
-an Xcode platform component download.
+**Verified**: 12 tests passing on macOS (`swift test`, locally and in CI), all 7 packages and
+the app target compile clean under Swift 6 against the iOS 26.5 SDK, and the app target
+builds for the iOS Simulator in CI (`BUILD SUCCEEDED` on `macos-latest` with an iPhone 17 Pro
+simulator). Launching it locally still requires the Xcode *iOS platform* component.
 
 **Design rules**: feature packages never import each other (everything goes through
 `TMACore`), repositories are protocols with injectable mocks, and no service credentials

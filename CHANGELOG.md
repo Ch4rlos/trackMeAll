@@ -34,6 +34,8 @@ Primera entrega del prototipo. Todo con datos mock; ninguna API del sistema acti
   del bloqueo.
 - Los 7 paquetes y el target de app compilan sin errores ni warnings con Swift 6 contra el
   SDK `iPhoneSimulator26.5`.
+- CI en GitHub Actions: ambos jobs en verde (`Tests de dominio` y `Build de la app`), con
+  `BUILD SUCCEEDED` sobre un simulador iPhone 17 Pro.
 
 ### Pendiente
 
