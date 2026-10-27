@@ -120,3 +120,15 @@ public struct BiometricAuthenticator: Sendable {
         }
     }
 }
+
+/// Contrato que consume `AppLockModel`. Existe para poder probar la máquina de
+/// estados del bloqueo con una implementación falsa, sin biometría real.
+@MainActor
+public protocol BiometricEvaluating: Sendable {
+    func availableBiometry() -> BiometricAuthenticator.Biometry
+    func canUseBiometrics() -> Bool
+    func unlock(reason: String) async throws(BiometricAuthenticator.Failure)
+    func unlockWithPasscodeFallback(reason: String) async throws(BiometricAuthenticator.Failure)
+}
+
+extension BiometricAuthenticator: BiometricEvaluating {}

@@ -1,32 +1,104 @@
 # trackMeAll
 
-App iOS personal para concentrar cuatro frentes en un solo lugar: **Salud**, **Finanzas**,
-**Actividades** y **Blog**. SwiftUI + MVVM + `@Observable`, un paquete SPM por sección,
-datos mock en la etapa 1.
+**Español** · [English](#english)
 
-- **Xcode**: 26.6 (arm64) · **iOS mínimo**: 18.0 · **Swift**: 6.0 (modo estricto)
-- **Arquitectura**: MVVM con `@Observable`, `Repository` por dominio y `MockRepository` inyectable
-- **Licencia**: MIT
+[![Swift 6.0](https://img.shields.io/badge/Swift-6.0-orange)](https://swift.org)
+[![iOS 18+](https://img.shields.io/badge/iOS-18%2B-blue)](https://developer.apple.com/ios/)
+[![Tests](https://img.shields.io/badge/tests-12%20passed-brightgreen)](#estado-de-verificación)
+[![Licencia MIT](https://img.shields.io/badge/licencia-MIT-green)](LICENSE)
+[![CI](https://github.com/Ch4rlos/trackMeAll/actions/workflows/ci.yml/badge.svg)](https://github.com/Ch4rlos/trackMeAll/actions/workflows/ci.yml)
 
-## Estructura
+App iOS personal que concentra cuatro frentes en un solo lugar: **Salud**, **Finanzas**,
+**Actividades** y **Blog**. SwiftUI, MVVM con `@Observable`, un paquete SPM por dominio,
+seguridad biométrica real y datos mock mientras se define el backend.
 
+Es también el proyecto con el que muestro cómo trabajo: arquitectura modular, decisiones
+documentadas, límites de plataforma dichos de frente y pruebas que corren.
+
+## Capturas
+
+Las capturas en dispositivo se agregan al validar el build en simulador/iPhone.
+El guion y el script para generarlas están en [`docs/CAPTURAS.md`](docs/CAPTURAS.md) y
+[`scripts/capturas.sh`](scripts/capturas.sh).
+
+## Arquitectura
+
+```mermaid
+graph TD
+    App["App<br/>TrackMeAllApp · RootTabView · SettingsView"]
+    Salud[TMASalud]
+    Fin[TMAFinanzas]
+    Act[TMAActividades]
+    Blog[TMABlog]
+    Sec[TMASecurity<br/>LocalAuthentication · Keychain]
+    Bon[TMABonanzas<br/>Intents · Spotlight · Handoff · Widgets · Live Activity]
+    Core["TMACore<br/>Modelos · Repository · MockData · Design system"]
+
+    App --> Salud
+    App --> Fin
+    App --> Act
+    App --> Blog
+    App --> Sec
+    App --> Bon
+    Salud --> Core
+    Fin --> Core
+    Act --> Core
+    Blog --> Core
+    Sec --> Core
+    Bon --> Core
 ```
-App/
-  TrackMeAllApp.swift      # arranque, bloqueo por biometría, auto-lock en background
-  RootTabView.swift        # 5 pestañas: Salud, Finanzas, Actividades, Blog, Ajustes
-  SettingsView.swift       # seguridad, prueba de Keychain, estado de integraciones
-  Info.plist               # generado por XcodeGen (no se versiona)
-Packages/
-  TMACore/                 # modelos, protocolos Repository, MockData, design system, hápticos, tests
-  TMASalud/                # HealthKit: Watch, alimentación, salud mental
-  TMAFinanzas/             # cuentas y movimientos (correo, OCR, CSV)
-  TMAActividades/          # uso de apps, lugares, agenda
-  TMABlog/                 # publicaciones y multimedia (R2/S3)
-  TMASecurity/             # LocalAuthentication, Keychain biométrico, pantalla de bloqueo
-  TMABonanzas/             # App Intents, Spotlight, Handoff, Live Activity, widgets
-```
 
-El `.xcodeproj` y el `Info.plist` **no se versionan**: se generan.
+Regla dura: **ningún paquete de sección se conoce entre sí**. Toda comunicación pasa por
+`TMACore`. El detalle está en [`docs/ARQUITECTURA.md`](docs/ARQUITECTURA.md).
+
+## Módulos
+
+| Paquete | Responsabilidad | Estado |
+|---|---|---|
+| `TMACore` | Modelos, protocolos `Repository`, `MockData`, design system, hápticos | ✅ tests |
+| `TMASalud` | HealthKit: Watch, alimentación, salud mental (`HKStateOfMind`) | mock |
+| `TMAFinanzas` | Cuentas y movimientos (correo, OCR, CSV) | mock |
+| `TMAActividades` | Uso de apps, lugares, agenda | mock |
+| `TMABlog` | Publicaciones y multimedia (R2/S3) | mock |
+| `TMASecurity` | Face ID / Touch ID, Keychain biométrico, pantalla de bloqueo | ✅ tests |
+| `TMABonanzas` | App Intents, Spotlight, Handoff, widgets, Live Activity | código listo |
+
+## Seguridad
+
+- **Biometría con LocalAuthentication**: Face ID, Touch ID u Optic ID; el sistema evalúa,
+  la app nunca ve tu rostro ni tu huella.
+- **Auto-bloqueo** al mandar la app al fondo, con caída al código del dispositivo cuando
+  la biometría se bloquea por intentos.
+- **Keychain con `biometryCurrentSet`**: si se agrega o borra un rostro/huella, el secreto
+  se invalida solo.
+- **La app no maneja credenciales de servicios**: las firmas de subida viajan al backend
+  (URLs prefirmadas, nunca llaves en el cliente).
+
+## Límites de plataforma (dichos de frente)
+
+| Quiero | ¿Se puede? | Camino real |
+|---|---|---|
+| Leer los SMS del banco | **No** | No existe API pública; se sustituye con correo (Gmail API), OCR on-device y CSV |
+| Ver movimientos de Apple Wallet | **Parcial** | `FinanceKit` cubre Apple Card/Cash y exige entitlement gestionado + cuenta a nivel organización |
+| Uso de apps del sistema | **Con permiso** | `DeviceActivity` + `Family Controls` (entitlement de Apple) |
+| Historial de lugares | **Sí** | `CoreLocation` visit monitoring |
+| Datos del Watch | **Sí** | `HealthKit` (requiere dispositivo que los genere) |
+
+El detalle, con la cita de la documentación de Apple, está en
+[`docs/ALCANCE-APPLE.md`](docs/ALCANCE-APPLE.md).
+
+## Estado de verificación
+
+| Qué | Cómo | Resultado |
+|---|---|---|
+| Tests de dominio (`TMACore`) | `swift test` en macOS | **5 passed** |
+| Tests del bloqueo biométrico (`TMASecurity`) | `swift test` en macOS | **7 passed** |
+| Compilación de los 7 paquetes | `swiftc -emit-module`, Swift 6, SDK iOS 26.5 | 0 errores, 0 warnings |
+| Compilación del target de app | `swiftc -typecheck` con los 7 módulos | 0 errores |
+| Ejecución en simulador | pendiente del componente *iOS 26.5 platform* en Xcode | — |
+| Biometría, Keychain, widgets, Live Activity en runtime | pendiente de dispositivo | — |
+
+## Cómo correr
 
 ```bash
 brew install xcodegen
@@ -34,51 +106,56 @@ xcodegen generate
 open trackMeAll.xcodeproj
 ```
 
-## Estado de verificación
+Pruebas (no necesitan simulador):
 
-| Qué | Cómo se verificó |
-|---|---|
-| Los 7 paquetes compilan | `swiftc -emit-module` con Swift 6 contra `iPhoneSimulator26.5.sdk` |
-| El target de app compila | `swiftc -typecheck` de `App/*.swift` con los 7 módulos |
-| Cero warnings en los paquetes nuevos | conteo de `warning:` en la salida del compilador |
-| Ejecutar en simulador | **pendiente**: falta el componente "iOS 26.5 platform" en Xcode |
-| Biometría real, Keychain, widgets, Live Activity | **pendiente**: requieren dispositivo/simulador con runtime |
+```bash
+swift test --package-path Packages/TMACore
+swift test --package-path Packages/TMASecurity
+```
 
-## Seguridad biométrica
+Build por CLI (requiere el componente iOS instalado en Xcode):
 
-- `BiometricAuthenticator` (LocalAuthentication) detecta Face ID / Touch ID / Optic ID y
-  distingue cancelación, bloqueo por intentos y falta de enrolamiento.
-- `AppLockModel` bloquea al volver del background y cae al código del dispositivo cuando
-  la biometría se bloquea.
-- `KeychainStore` guarda secretos con `biometryCurrentSet`: si se agrega o borra un
-  rostro/huella, el item se invalida. La app nunca ve tu rostro ni tu huella.
-- Ajustes tiene un botón de diagnóstico que hace round-trip de un nonce en el Keychain.
+```bash
+xcodebuild -project trackMeAll.xcodeproj -scheme trackMeAll \
+  -destination 'generic/platform=iOS Simulator' build
+```
 
-## Ecosistema Apple
+## Roadmap
 
-| Integración | Estado | Requisito |
-|---|---|---|
-| Siri y Atajos (App Intents) | código listo | ninguno |
-| Spotlight (indexa blog) | código listo | ninguno |
-| Handoff | código listo | `NSUserActivityTypes` (ya en `project.yml`) |
-| Keychain biométrico | código listo | dispositivo con biometría |
-| Widgets (Salud, Finanzas) | código listo | extensión WidgetKit en el proyecto |
-| Live Activities | código listo | extensión + `NSSupportsLiveActivities` |
-| HealthKit | por implementar | firma con Apple ID/equipo |
-| DeviceActivity / Family Controls | por implementar | entitlement aprobado por Apple |
+- [x] Scaffold: 7 paquetes, 4 secciones con datos mock
+- [x] Acceso biométrico, Keychain protegido y auto-bloqueo
+- [x] App Intents, Spotlight, Handoff, widgets y Live Activity (código)
+- [x] CI en macOS con build y tests
+- [ ] Persistencia con SwiftData + `FileProtection` y migraciones versionadas
+- [ ] Extensiones de WidgetKit y Live Activity en el target
+- [ ] HealthKit real (lectura de Watch, sueño, ánimo)
+- [ ] Finanzas: Gmail API + OCR con Vision
+- [ ] Backend de blog con R2 (URLs prefirmadas)
+- [ ] Capturas y GIF para este README
 
-## Alcance real por sección
+## Licencia
 
-| Sección | Etapa 1 (mock) | Etapa 2 (datos reales) | Bloqueo |
-|---|---|---|---|
-| Salud | 8 métricas, serie de pasos, ánimo, nutrición | HealthKit (`HKQuantityType`, `HKWorkout`, `HKStateOfMind`) | El simulador no genera datos del Watch: requiere iPhone |
-| Finanzas | cuentas + movimientos con origen | Gmail API (correo bancario), OCR on-device (Vision), CSV | **SMS: imposible** (sin API pública). **Wallet/Apple Card**: FinanceKit exige entitlement gestionado y cuenta a nivel organización |
-| Actividades | uso de apps, visitas, agenda | DeviceActivity + Family Controls, CoreLocation visit monitoring, EventKit | Family Controls requiere entitlement; uso individual funciona en build propio |
-| Blog | posts con estado + assets R2 | API de publicación + URLs prefirmadas a R2 (compatible S3) | Ninguno técnico: depende del backend del sitio |
+MIT — ver [`LICENSE`](LICENSE).
 
-## Reglas del proyecto
+---
 
-- La app **nunca** maneja credenciales de servicios: las firmas viajan al backend.
-- Nada de leer SMS ni APIs privadas.
-- Toda sección nueva entra con su `Repository` + `MockRepository` + tests antes de tocar datos reales.
-- `trackMeAll` es nombre de trabajo del prototipo.
+## English
+
+Personal iOS app that brings four areas together: **Health**, **Finance**, **Activity**
+and **Blog**. SwiftUI with MVVM and `@Observable`, one SwiftPM package per domain, real
+biometric security, and mock data while the backend is defined.
+
+**Verified**: 12 tests passing on macOS (`swift test`), all 7 packages and the app target
+compile clean under Swift 6 against the iOS 26.5 SDK. Running in the Simulator is pending
+an Xcode platform component download.
+
+**Design rules**: feature packages never import each other (everything goes through
+`TMACore`), repositories are protocols with injectable mocks, and no service credentials
+ever live in the client — uploads use presigned URLs.
+
+**Platform limits, stated plainly**: iOS has no public API to read SMS, `FinanceKit`
+(Apple Card/Cash) requires a managed entitlement and an organization-level Apple Developer
+account, and per-app usage requires the `Family Controls` entitlement. Those are documented
+with Apple's own wording in [`docs/ALCANCE-APPLE.md`](docs/ALCANCE-APPLE.md).
+
+MIT licensed.

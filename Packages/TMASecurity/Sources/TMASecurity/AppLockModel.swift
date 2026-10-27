@@ -29,11 +29,11 @@ public final class AppLockModel {
     }
 
     private static let enabledKey = "tma.biometrics.enabled"
-    private let authenticator: BiometricAuthenticator
+    private let authenticator: any BiometricEvaluating
     private let defaults: UserDefaults
     private let keychain: KeychainStore
 
-    public init(authenticator: BiometricAuthenticator = BiometricAuthenticator(),
+    public init(authenticator: any BiometricEvaluating = BiometricAuthenticator(),
                 defaults: UserDefaults = .standard,
                 keychain: KeychainStore = KeychainStore()) {
         self.authenticator = authenticator
