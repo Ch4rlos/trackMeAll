@@ -96,6 +96,7 @@ El detalle, con la cita de la documentación de Apple, está en
 | Compilación de los 7 paquetes | `swiftc -emit-module`, Swift 6, SDK iOS 26.5 | 0 errores, 0 warnings |
 | Compilación del target de app | `swiftc -typecheck` con los 7 módulos | 0 errores |
 | Build del target en simulador | GitHub Actions `macos-latest`, simulador iPhone 17 Pro | **BUILD SUCCEEDED** |
+| Build para dispositivo físico | `xcodebuild -destination 'generic/platform=iOS'` | **BUILD SUCCEEDED** |
 | Arrancar la app en simulador local | pendiente del componente *iOS 26.5 platform* en Xcode | — |
 | Biometría, Keychain, widgets, Live Activity en runtime | pendiente de dispositivo | — |
 
@@ -120,6 +121,10 @@ Build por CLI (requiere el componente iOS instalado en Xcode):
 xcodebuild -project trackMeAll.xcodeproj -scheme trackMeAll \
   -destination 'generic/platform=iOS Simulator' build
 ```
+
+**Correr en tu iPhone** (incluido por Wi-Fi): ver [`docs/DISPOSITIVO.md`](docs/DISPOSITIVO.md).
+Resumen: el build para dispositivo físico ya compila en este proyecto; solo falta firma con
+tu Apple ID, Modo Desarrollador en el teléfono y un pareo inicial por cable.
 
 ## Roadmap
 
