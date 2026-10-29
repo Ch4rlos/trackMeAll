@@ -46,8 +46,10 @@ xcodebuild -project trackMeAll.xcodeproj -scheme trackMeAll \
 gh run list --limit 3
 ```
 
-En esta Mac **falta el componente iOS platform**, así que el simulador local no arranca.
-Escalera completa de verificación: skill `ios-verificar-sin-simulador`.
+En esta Mac el runtime de simulador iOS 26.5 **sí está instalado**: se puede compilar,
+arrancar y capturar pantalla. El shell de herramientas no hereda `DEVELOPER_DIR` de
+`~/.zshrc`, así que expórtalo o `xcrun` no encuentra `simctl`. Escalera completa de
+verificación: skill `ios-verificar-sin-simulador`.
 
 ## Reglas de trabajo
 
