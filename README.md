@@ -17,9 +17,19 @@ documentadas, límites de plataforma dichos de frente y pruebas que corren.
 
 ## Capturas
 
-Las capturas en dispositivo se agregan al validar el build en simulador/iPhone.
-El guion y el script para generarlas están en [`docs/CAPTURAS.md`](docs/CAPTURAS.md) y
-[`scripts/capturas.sh`](scripts/capturas.sh).
+<p align="center">
+  <img src="docs/img/hero.png" alt="Salud, Finanzas y Actividades en trackMeAll" width="100%">
+</p>
+
+Generadas con [`scripts/capturas.sh`](scripts/capturas.sh) sobre un iPhone 17 Pro
+(simulador iOS 26.5): mismo tamaño, mismo estado, mismos datos. No son mockups.
+
+| | | |
+|---|---|---|
+| [<img src="docs/img/salud.png" width="200">](docs/img/salud.png) | [<img src="docs/img/finanzas.png" width="200">](docs/img/finanzas.png) | [<img src="docs/img/actividades.png" width="200">](docs/img/actividades.png) |
+| Salud · HealthKit | Finanzas | Actividades |
+| [<img src="docs/img/blog.png" width="200">](docs/img/blog.png) | [<img src="docs/img/ajustes.png" width="200">](docs/img/ajustes.png) | [<img src="docs/img/demo.gif" width="200">](docs/img/demo.gif) |
+| Blog | Ajustes · seguridad | Recorrido completo (GIF) |
 
 ## Arquitectura
 
@@ -95,9 +105,10 @@ El detalle, con la cita de la documentación de Apple, está en
 | Tests del bloqueo biométrico (`TMASecurity`) | `swift test` en macOS (local y CI) | **7 passed** |
 | Compilación de los 7 paquetes | `swiftc -emit-module`, Swift 6, SDK iOS 26.5 | 0 errores, 0 warnings |
 | Compilación del target de app | `swiftc -typecheck` con los 7 módulos | 0 errores |
-| Build del target en simulador | GitHub Actions `macos-latest`, simulador iPhone 17 Pro | **BUILD SUCCEEDED** |
+| Build del target en simulador | local (iPhone 17 Pro, iOS 26.5) y GitHub Actions `macos-latest` | **BUILD SUCCEEDED** |
+| Arrancar la app en simulador | `xcrun simctl launch` en iPhone 17 Pro (iOS 26.5) | arranca y navega las 5 pestañas |
+| Capturas del README | `scripts/capturas.sh`, 5 PNG + GIF | **generadas y verificadas a ojo** |
 | Build para dispositivo físico | `xcodebuild -destination 'generic/platform=iOS'` | **BUILD SUCCEEDED** |
-| Arrancar la app en simulador local | pendiente del componente *iOS 26.5 platform* en Xcode | — |
 | Biometría, Keychain, widgets, Live Activity en runtime | pendiente de dispositivo | — |
 
 ## Cómo correr
@@ -107,6 +118,9 @@ brew install xcodegen
 xcodegen generate
 open trackMeAll.xcodeproj
 ```
+
+Si `xcrun simctl` no aparece, exporta el Xcode antes de nada:
+`export DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer`.
 
 Pruebas (no necesitan simulador):
 
@@ -137,7 +151,7 @@ tu Apple ID, Modo Desarrollador en el teléfono y un pareo inicial por cable.
 - [ ] HealthKit real (lectura de Watch, sueño, ánimo)
 - [ ] Finanzas: Gmail API + OCR con Vision
 - [ ] Backend de blog con R2 (URLs prefirmadas)
-- [ ] Capturas y GIF para este README
+- [x] Capturas y GIF para este README
 
 ## Licencia
 
@@ -152,9 +166,9 @@ and **Blog**. SwiftUI with MVVM and `@Observable`, one SwiftPM package per domai
 biometric security, and mock data while the backend is defined.
 
 **Verified**: 12 tests passing on macOS (`swift test`, locally and in CI), all 7 packages and
-the app target compile clean under Swift 6 against the iOS 26.5 SDK, and the app target
-builds for the iOS Simulator in CI (`BUILD SUCCEEDED` on `macos-latest` with an iPhone 17 Pro
-simulator). Launching it locally still requires the Xcode *iOS platform* component.
+the app target compile clean under Swift 6 against the iOS 26.5 SDK, and the app builds,
+launches and navigates all five tabs on an iPhone 17 Pro simulator (iOS 26.5), both locally
+and in CI. Every screenshot in this README comes from that simulator run, not from mockups.
 
 **Design rules**: feature packages never import each other (everything goes through
 `TMACore`), repositories are protocols with injectable mocks, and no service credentials

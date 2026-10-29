@@ -101,22 +101,22 @@ public enum MockData {
     public static func visits(now: Date = .now) -> [PlaceVisit] {
         [
             PlaceVisit(name: "Odin's Grip", arrivedAt: now.addingTimeInterval(-14_400),
-                       durationMinutes: 95, latitude: 25.6714, longitude: -100.3090),
+                       durationMinutes: 95, latitude: 25.67, longitude: -100.31),
             PlaceVisit(name: "Casa", arrivedAt: now.addingTimeInterval(-28_800),
-                       durationMinutes: 540, latitude: 25.6480, longitude: -100.3520),
+                       durationMinutes: 540, latitude: 25.65, longitude: -100.35),
             PlaceVisit(name: "CEDIM", arrivedAt: now.addingTimeInterval(-90_000),
-                       durationMinutes: 60, latitude: 25.6509, longitude: -100.2890)
+                       durationMinutes: 60, latitude: 25.65, longitude: -100.29)
         ]
     }
 
     public static func agenda(now: Date = .now, calendar: Calendar = .current) -> [AgendaEvent] {
         [
-            AgendaEvent(title: "Llamada Cindy · Asesorías Century",
+            AgendaEvent(title: "Llamada de trabajo",
                         start: now.addingTimeInterval(3_600),
                         end: now.addingTimeInterval(5_400), calendar: "Trabajo"),
-            AgendaEvent(title: "Revisión RGS",
+            AgendaEvent(title: "Revisión de proyecto",
                         start: now.addingTimeInterval(86_400),
-                        end: now.addingTimeInterval(90_000), calendar: "Torre RGS")
+                        end: now.addingTimeInterval(90_000), calendar: "Obra norte")
         ]
     }
 

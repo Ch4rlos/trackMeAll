@@ -1,9 +1,15 @@
 #!/usr/bin/env bash
 # Genera las capturas del README abriendo la app en cada pestaña.
 # Uso: ./scripts/capturas.sh        (o SIM="iPhone 16 Pro" ./scripts/capturas.sh)
+# Corre headless: no abre la app Simulator. Para verla, OPEN_SIM=1 ./scripts/capturas.sh
 set -euo pipefail
 
 cd "$(dirname "$0")/.."
+
+# simctl no está en el PATH si Xcode no está seleccionado en este shell.
+if ! xcrun --find simctl >/dev/null 2>&1; then
+  export DEVELOPER_DIR="${DEVELOPER_DIR:-/Applications/Xcode.app/Contents/Developer}"
+fi
 
 BUNDLE_ID="com.carlosquiroga.trackmeall"
 OUT="docs/img"
@@ -35,7 +41,7 @@ APP="$DERIVED/Build/Products/Debug-iphonesimulator/trackMeAll.app"
 
 xcrun simctl boot "$SIM" 2>/dev/null || true
 xcrun simctl bootstatus "$SIM" -b
-open -a Simulator || true
+[ "${OPEN_SIM:-0}" = "1" ] && open -a Simulator || true
 
 xcrun simctl install booted "$APP"
 
