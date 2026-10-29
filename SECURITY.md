@@ -3,8 +3,8 @@
 ## Cómo reportar
 
 Si encuentras una vulnerabilidad, abre un aviso privado en
-[Security Advisories](https://github.com/Ch4rlos/trackMeAll/security/advisories/new)
-o escribe a `quirogacarlos@gmail.com`. No abras un issue público con el detalle.
+[Security Advisories](https://github.com/Ch4rlos/trackMeAll/security/advisories/new).
+No abras un issue público con el detalle.
 
 ## Qué protege la app
 
