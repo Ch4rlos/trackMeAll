@@ -8,6 +8,7 @@ presentación**, así que la calidad es de portafolio.
 
 ```
 App/                 target de app (TrackMeAllApp, RootTabView, SettingsView)
+Package.swift        manifiesto raiz: publica los 7 modulos como productos SPM
 Packages/
   TMACore/           modelos, Repository protocols, MockData, design system, tests
   TMASalud/          HealthKit (etapa 2)
@@ -21,6 +22,10 @@ docs/                ARQUITECTURA, DECISIONES (ADR), ALCANCE-APPLE, DISPOSITIVO,
 
 Regla dura: **los paquetes de sección no se importan entre sí.** Lo compartido va en
 `TMACore`.
+
+`Package.swift` en la raíz no es opcional: SwiftPM solo lee el manifiesto de la raíz de un
+repo remoto, y sin él ningún otro proyecto puede depender de `TMACore` por URL y tag. Si
+agregas un módulo, decláralo también ahí.
 
 ## Build y verificación
 

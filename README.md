@@ -73,6 +73,34 @@ Regla dura: **ningún paquete de sección se conoce entre sí**. Toda comunicaci
 | `TMASecurity` | Face ID / Touch ID, Keychain biométrico, pantalla de bloqueo | ✅ tests |
 | `TMABonanzas` | App Intents, Spotlight, Handoff, widgets, Live Activity | código listo |
 
+## Reusar los módulos en otro proyecto
+
+Los 7 paquetes se publican como productos SPM desde el `Package.swift` de la raíz, así que
+otro proyecto puede depender de ellos por URL y versión —sin copiar código ni usar
+submódulos:
+
+```swift
+// Package.swift del proyecto que consume
+dependencies: [
+    .package(url: "https://github.com/Ch4rlos/trackMeAll.git", from: "0.1.1")
+],
+targets: [
+    .target(
+        name: "MiApp",
+        dependencies: [.product(name: "TMACore", package: "trackMeAll")]
+    )
+]
+```
+
+Verificado con un proyecto aparte (`0.1.1`): resuelve, compila `TMACore` para iOS arm64 y
+enlaza — `BUILD SUCCEEDED` con `-destination 'generic/platform=iOS'`.
+
+> **Por qué existe el `Package.swift` raíz.** SwiftPM solo lee el manifiesto que está en la
+> raíz de un repositorio remoto. Apuntar `.package(url:)` a un repo con los paquetes en
+> subdirectorios falla con *"the package manifest at '/Package.swift' cannot be accessed"*
+> (comprobado). Los `Packages/*/Package.swift` se quedan para correr
+> `swift test --package-path` de forma aislada.
+
 ## Seguridad
 
 - **Biometría con LocalAuthentication**: Face ID, Touch ID u Optic ID; el sistema evalúa,

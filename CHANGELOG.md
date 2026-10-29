@@ -3,6 +3,30 @@
 Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/).
 Versionado semántico mientras sea prototipo: `0.x`.
 
+## [0.1.1] — 2026-10-28
+
+Primer corte publicado del repositorio.
+
+### Agregado
+
+- **`Package.swift` raíz**: publica los 7 módulos como productos SPM consumibles por URL y
+  tag desde cualquier otro proyecto (verificado con un consumidor externo en `0.1.1`).
+- **Capturas reales**: 5 PNG a 500 px, `hero.png` y `demo.gif` generados con
+  `scripts/capturas.sh` en iPhone 17 Pro (simulador iOS 26.5).
+
+### Cambiado
+
+- `README`: hero visual, tabla de capturas enlazadas, estado de verificación corregido
+  (el simulador local ya arranca la app) y sección de reutilización de los paquetes.
+- `scripts/capturas.sh`: corre headless por defecto (`OPEN_SIM=1` abre la ventana) y
+  resuelve `DEVELOPER_DIR` cuando `xcrun` no encuentra `simctl`.
+- `MockData`: coordenadas de lugares a 2 decimales y agenda sin nombres de terceros.
+
+### Seguridad
+
+- `SECURITY.md` deja de publicar un correo personal; los reportes van solo por
+  Security Advisories.
+
 ## [0.1.0] — 2026-10-27
 
 Primera entrega del prototipo. Todo con datos mock; ninguna API del sistema activada.
