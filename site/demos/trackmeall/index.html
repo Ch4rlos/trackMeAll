@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="es" data-tema="dia">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow, noarchive, nosnippet">
+<title>trackMeAll — app de iPhone para llevar tu vida en un solo lugar</title>
+<meta name="description" content="App iOS personal: salud, finanzas, actividades y blog en un mismo lugar. SwiftUI, siete módulos y código abierto.">
+<link rel="icon" href="data:,">
+<style>
+  :root{
+    --fondo:#f2f0eb; --tinta:#121211; --tenue:#5f5c55; --linea:#d9d5cb; --panel:#fbfaf7;
+    --acento:#0f5f58; --radio:14px;
+  }
+  [data-tema="noche"]{
+    --fondo:#121211; --tinta:#f2f0eb; --tenue:#a3a09a; --linea:#2b2a27; --panel:#1a1a18;
+    --acento:#5fbcb2;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-tema="dia"]){
+      --fondo:#121211; --tinta:#f2f0eb; --tenue:#a3a09a; --linea:#2b2a27; --panel:#1a1a18;
+      --acento:#5fbcb2;
+    }
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0; background:var(--fondo); color:var(--tinta);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,system-ui,sans-serif;
+    font-size:17px; line-height:1.6; -webkit-font-smoothing:antialiased;
+  }
+  .envoltura{max-width:900px; margin:0 auto; padding:28px 22px 72px}
+  .miga{font-size:.82rem; letter-spacing:.06em; text-transform:uppercase; color:var(--tenue); margin-bottom:44px}
+  .miga a{color:var(--tenue); text-decoration:none; border-bottom:1px solid var(--linea)}
+  .miga a:hover{color:var(--tinta)}
+  h1{font-size:clamp(2.1rem,6vw,3.1rem); line-height:1.05; letter-spacing:-.02em; margin:0 0 18px}
+  .entrada{font-size:1.12rem; color:var(--tenue); max-width:60ch; margin:0 0 40px}
+  .entrada strong{color:var(--tinta); font-weight:600}
+  .hero{margin:0 0 56px; text-align:center}
+  .hero img{width:100%; max-width:820px; height:auto}
+  h2{font-size:1.02rem; letter-spacing:.1em; text-transform:uppercase; color:var(--tenue);
+     font-weight:600; margin:0 0 20px; padding-bottom:10px; border-bottom:1px solid var(--linea)}
+  section{margin-bottom:56px}
+  .rejilla{display:grid; grid-template-columns:1fr; gap:14px}
+  @media (min-width:660px){ .rejilla{grid-template-columns:1fr 1fr} }
+  .tarjeta{background:var(--panel); border:1px solid var(--linea); border-radius:var(--radio); padding:20px}
+  .tarjeta h3{margin:0 0 4px; font-size:1rem; letter-spacing:-.01em}
+  .tarjeta .rol{font-size:.82rem; color:var(--tenue); margin:0 0 12px}
+  .tarjeta ul{margin:0; padding-left:18px; font-size:.92rem; color:var(--tenue)}
+  .tarjeta li{margin-bottom:5px}
+  .razones{display:grid; gap:18px; counter-reset:r}
+  .razon{display:grid; grid-template-columns:auto 1fr; gap:16px; align-items:start}
+  .razon::before{
+    counter-increment:r; content:counter(r,decimal-leading-zero);
+    font-variant-numeric:tabular-nums; font-size:.82rem; color:var(--acento);
+    font-weight:600; padding-top:3px;
+  }
+  .razon p{margin:0; color:var(--tenue)}
+  .razon b{color:var(--tinta); font-weight:600}
+  table{width:100%; border-collapse:collapse; font-size:.93rem}
+  th,td{text-align:left; padding:12px 14px; border-bottom:1px solid var(--linea); vertical-align:top}
+  th{font-size:.78rem; letter-spacing:.08em; text-transform:uppercase; color:var(--tenue); font-weight:600}
+  td:first-child{color:var(--tenue)}
+  .cierre{background:var(--panel); border:1px solid var(--linea); border-radius:var(--radio);
+          padding:26px; display:flex; flex-wrap:wrap; gap:14px; align-items:center; justify-content:space-between}
+  .cierre p{margin:0; max-width:46ch}
+  .boton{display:inline-block; background:var(--tinta); color:var(--fondo); text-decoration:none;
+         padding:12px 22px; border-radius:999px; font-size:.92rem; font-weight:600; white-space:nowrap}
+  .boton:hover{opacity:.86}
+  footer{margin-top:64px; padding-top:22px; border-top:1px solid var(--linea);
+         font-size:.82rem; color:var(--tenue); display:flex; flex-wrap:wrap; gap:8px 18px; justify-content:space-between}
+  @media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<div class="envoltura">
+
+  <p class="miga"><a href="https://carlosquiroga.com">Carlos Quiroga</a> · Tecnología</p>
+
+  <h1>trackMeAll</h1>
+  <p class="entrada">
+    Una app de iPhone para llevar <strong>salud, finanzas, actividades y lo que escribo</strong>
+    en un solo lugar. La hice porque mis datos viven en cuatro apps que no se hablan entre sí
+    y ninguna me deja ver el conjunto.
+  </p>
+
+  <div class="hero">
+    <img src="img/hero.png" alt="Pantallas de Salud, Finanzas y Actividades en trackMeAll" width="820">
+  </div>
+
+  <section>
+    <h2>Qué hace</h2>
+    <div class="rejilla">
+      <div class="tarjeta">
+        <h3>Salud</h3>
+        <p class="rol">Lo que mide el teléfono y el reloj</p>
+        <ul>
+          <li>Pasos de la semana y métricas del día</li>
+          <li>Sueño, frecuencia cardiaca y HRV</li>
+          <li>Entrenamientos y VO₂ máximo</li>
+          <li>Ánimo y alimentación capturados a mano</li>
+        </ul>
+      </div>
+      <div class="tarjeta">
+        <h3>Finanzas</h3>
+        <p class="rol">Cuentas, saldo y movimientos</p>
+        <ul>
+          <li>Balance total y por cuenta</li>
+          <li>Movimientos con su origen: manual, correo, OCR o CSV</li>
+          <li>Aviso claro de qué no se puede leer del banco</li>
+        </ul>
+      </div>
+      <div class="tarjeta">
+        <h3>Actividades</h3>
+        <p class="rol">Tiempo, lugares y agenda</p>
+        <ul>
+          <li>Uso de apps por categoría</li>
+          <li>Lugares donde estuve y cuánto tiempo</li>
+          <li>Agenda del día</li>
+        </ul>
+      </div>
+      <div class="tarjeta">
+        <h3>Blog</h3>
+        <p class="rol">Lo que escribo, con sus archivos</p>
+        <ul>
+          <li>Publicaciones por estado: publicado, borrador, programado</li>
+          <li>Imágenes y documentos ligados a cada texto</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Para qué sirve de verdad</h2>
+    <div class="razones">
+      <div class="razon">
+        <p><b>Para quien quiere su historial en un solo lugar.</b> Sin hojas de cálculo ni
+        cuatro apps abiertas: un tablero con lo que pasó esta semana en tu cuerpo, tu dinero y
+        tu tiempo.</p>
+      </div>
+      <div class="razon">
+        <p><b>Para quien no quiere subir sus datos a un servidor.</b> Este proyecto funciona
+        con datos de ejemplo y no manda nada a ningún lado. Todo se queda en el teléfono.</p>
+      </div>
+      <div class="razon">
+        <p><b>Para quien quiere ver su año, no su día.</b> Lo importante no es el paso de hoy:
+        es la tendencia de siete días, el mes contra el anterior, el ánimo junto al sueño.</p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Lo que no hace, y por qué</h2>
+    <table>
+      <thead><tr><th>Lo que uno esperaría</th><th>La realidad</th></tr></thead>
+      <tbody>
+        <tr><td>Leer SMS o iMessage</td><td>Apple no tiene API pública para eso. Solo existen APIs privadas, y una app que las use se rechaza.</td></tr>
+        <tr><td>Movimientos de Wallet o Apple Card</td><td>Requiere un permiso especial que Apple revisa y una cuenta de desarrollador de empresa.</td></tr>
+        <tr><td>Qué apps usas y por cuánto tiempo</td><td>Es posible, pero el permiso se le pide a Apple antes de poder distribuir la app.</td></tr>
+        <tr><td>Ver mis datos desde otro equipo</td><td>No hay servidor: la app no envía información a ningún lado.</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section>
+    <div class="cierre">
+      <p><b>Código abierto.</b> Siete módulos, pruebas automatizadas y capturas reales del simulador. Sin llaves, sin endpoints y sin datos personales.</p>
+      <a class="boton" href="https://github.com/Ch4rlos/trackMeAll">Ver el repositorio</a>
+    </div>
+  </section>
+
+  <footer>
+    <span>Carlos Quiroga · Monterrey, Nuevo León</span>
+    <span>trackMeAll · app iOS personal</span>
+  </footer>
+
+</div>
+</body>
+</html>

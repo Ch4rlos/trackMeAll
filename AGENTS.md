@@ -17,7 +17,8 @@ Packages/
   TMABlog/           publicaciones + assets R2/S3
   TMASecurity/       biometría (LocalAuthentication) + Keychain
   TMABonanzas/       App Intents, Spotlight, Handoff, Live Activity, widgets
-docs/                ARQUITECTURA, DECISIONES (ADR), ALCANCE-APPLE, DISPOSITIVO, CAPTURAS
+docs/                ARQUITECTURA, DECISIONES (ADR), ALCANCE-APPLE, DISPOSITIVO, CAPTURAS, FICHA-WEB
+site/demos/          paginas no listadas para carlosquiroga.com (exportar con scripts/export-demo.sh)
 ```
 
 Regla dura: **los paquetes de sección no se importan entre sí.** Lo compartido va en
